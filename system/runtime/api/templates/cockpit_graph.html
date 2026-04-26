@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nexus Cockpit Graph</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07100f;
+      --panel: #0d1917;
+      --panel-2: #12221f;
+      --panel-3: #172c27;
+      --border: #24433c;
+      --border-strong: #3f6b60;
+      --text: #e6f4ee;
+      --muted: #8fa79f;
+      --quiet: #5f7d73;
+      --accent: #72ead2;
+      --ok: #70e0a8;
+      --warn: #f0c76f;
+      --risk: #ff7a73;
+      --agent: #6fb7ff;
+      --mcp: #bda1ff;
+      --tree: #a0d76f;
+      --shadow: rgba(0, 0, 0, 0.38);
+    }
+    * { box-sizing: border-box; }
+    html { overflow-x: hidden; }
+    body {
+      margin: 0;
+      min-width: 0;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(114, 234, 210, 0.16), transparent 28rem),
+        radial-gradient(circle at 86% 0%, rgba(240, 199, 111, 0.10), transparent 26rem),
+        linear-gradient(180deg, #0c1715 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: "Aptos", "Segoe UI Variable", "Segoe UI", sans-serif;
+    }
+    a { color: var(--accent); }
+    .shell {
+      width: min(100%, 1520px);
+      margin: 0 auto;
+      padding: 18px clamp(14px, 2vw, 28px) 36px;
+    }
+    .context-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--border);
+      background: rgba(18, 34, 31, 0.86);
+      border-radius: 18px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 16px 44px var(--shadow);
+    }
+    .brand {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: baseline;
+      min-width: 0;
+    }
+    .brand-mark {
+      color: var(--accent);
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.83rem;
+    }
+    .context-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .context-pill,
+    .map-pill {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      padding: 5px 10px;
+      white-space: nowrap;
+    }
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .mode-rail {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: rgba(18, 34, 31, 0.82);
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: 0 16px 44px var(--shadow);
+    }
+    .mode-rail a {
+      display: block;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      color: var(--text);
+      font-weight: 750;
+      padding: 9px 10px;
+      text-decoration: none;
+    }
+    .mode-rail a:hover,
+    .mode-rail a:focus,
+    .mode-rail a.active {
+      border-color: var(--border-strong);
+      background: rgba(114, 234, 210, 0.12);
+      color: var(--accent);
+    }
+    .mode-rail span {
+      display: block;
+      color: var(--quiet);
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      margin: 4px 8px;
+      text-transform: uppercase;
+    }
+    .main-field { min-width: 0; }
+    .hero,
+    .panel {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 22px;
+      box-shadow: 0 18px 52px var(--shadow);
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 440px);
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 16px;
+      padding: clamp(16px, 2vw, 24px);
+      background:
+        linear-gradient(135deg, rgba(114, 234, 210, 0.11), rgba(240, 199, 111, 0.04)),
+        var(--panel);
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.55rem, 3vw, 2.7rem);
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+    p { color: var(--muted); }
+    .evidence-rail {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(7, 16, 15, 0.46);
+      padding: 12px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .evidence-rail div + div { margin-top: 6px; }
+    .map-workbench {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      min-height: 720px;
+      overflow: hidden;
+    }
+    .map-main { min-width: 0; }
+    .map-control-bar {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 10px;
+      align-items: end;
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(18, 34, 31, 0.72);
+    }
+    .map-control-bar label,
+    .control-panel label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 760;
+      letter-spacing: 0.02em;
+    }
+    select,
+    input {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 9px;
+      background: #07100f;
+      color: var(--text);
+      font: inherit;
+      min-width: 0;
+      width: 100%;
+    }
+    button,
+    .button-link {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--panel-3);
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font: inherit;
+      font-weight: 760;
+      min-height: 36px;
+      padding: 8px 12px;
+      text-decoration: none;
+    }
+    button:hover,
+    button:focus,
+    .button-link:hover,
+    .button-link:focus {
+      border-color: var(--border-strong);
+      color: var(--accent);
+    }
+    .button-primary {
+      background: rgba(114, 234, 210, 0.16);
+      border-color: rgba(114, 234, 210, 0.44);
+      color: var(--accent);
+    }
+    .preset-row,
+    .floating-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(7, 16, 15, 0.46);
+    }
+    .preset-row button {
+      min-height: 30px;
+      padding: 6px 10px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+    .graph-stage {
+      position: relative;
+      min-height: 560px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(114, 234, 210, 0.08), transparent 30rem),
+        linear-gradient(180deg, #0b1715, #07100f);
+    }
+    #graph {
+      display: block;
+      width: 100%;
+      min-height: 620px;
+      cursor: grab;
+      touch-action: none;
+    }
+    #graph:active { cursor: grabbing; }
+    .floating-toolbar {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      box-shadow: 0 18px 52px var(--shadow);
+    }
+    .floating-toolbar button {
+      min-height: 30px;
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+    .empty-state {
+      position: absolute;
+      inset: 0;
+      display: none;
+      place-items: center;
+      pointer-events: none;
+      color: var(--quiet);
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .empty-state.visible { display: grid; }
+    .link {
+      stroke: var(--border-strong);
+      stroke-opacity: 0.64;
+      stroke-width: 1.8;
+      cursor: pointer;
+    }
+    .link.cross-domain {
+      stroke: var(--warn);
+      stroke-dasharray: 7 4;
+    }
+    .link.selected,
+    .link.highlighted {
+      stroke: var(--accent);
+      stroke-opacity: 1;
+      stroke-width: 3;
+    }
+    .node { cursor: pointer; }
+    .node circle {
+      stroke: rgba(230, 244, 238, 0.72);
+      stroke-width: 1.6;
+    }
+    .node text {
+      fill: var(--text);
+      font-size: 12px;
+      font-weight: 760;
+      paint-order: stroke;
+      pointer-events: none;
+      stroke: #07100f;
+      stroke-linejoin: round;
+      stroke-width: 4px;
+    }
+    .node.selected circle,
+    .node.highlighted circle {
+      stroke: var(--accent);
+      stroke-width: 3;
+      filter: drop-shadow(0 0 10px rgba(114, 234, 210, 0.44));
+    }
+    .dimmed { opacity: 0.16; }
+    .control-panel {
+      border-left: 1px solid var(--border);
+      background: rgba(18, 34, 31, 0.86);
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      min-width: 0;
+    }
+    .control-section {
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+    }
+    .control-section h2 {
+      font-size: 0.76rem;
+      letter-spacing: 0.12em;
+      margin: 0;
+      text-transform: uppercase;
+      color: var(--quiet);
+    }
+    .control-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .inspector {
+      min-height: 0;
+      overflow: auto;
+      padding: 14px;
+    }
+    .inspector-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(7, 16, 15, 0.48);
+      padding: 14px;
+    }
+    .inspector-card h2 {
+      font-size: 1.05rem;
+      margin: 0 0 6px;
+      word-break: break-word;
+    }
+    .meta-list {
+      color: var(--muted);
+      display: grid;
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-size: 0.78rem;
+      gap: 6px;
+      margin: 12px 0;
+      overflow-wrap: anywhere;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .event-strip {
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-size: 0.78rem;
+      overflow-wrap: anywhere;
+      padding: 10px 14px;
+    }
+    @media (max-width: 960px) {
+      .cockpit-grid,
+      .map-workbench,
+      .hero {
+        display: block;
+      }
+      .mode-rail {
+        position: static;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 6px;
+        margin-bottom: 12px;
+        overflow-x: auto;
+        padding: 8px;
+      }
+      .mode-rail span { display: none; }
+      .mode-rail a { flex: 0 0 auto; padding: 8px 10px; }
+      .map-control-bar { grid-template-columns: 1fr; }
+      .control-panel { border-left: 0; border-top: 1px solid var(--border); }
+      .floating-toolbar {
+        left: 12px;
+        right: 12px;
+        transform: none;
+        justify-content: center;
+      }
+      #graph { min-height: 520px; }
+    }
+  </style>
+  <script src="/static/vendor/d3.v7.9.0.min.js"></script>
+  <script src="/static/cockpit_map.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <div class="context-bar" aria-label="Global cockpit context">
+      <div class="brand">
+        <span class="brand-mark">Nexus</span>
+        <span>Institutional Cockpit</span>
+      </div>
+      <div class="context-pill-row">
+        <span class="context-pill">DB authority</span>
+        <span class="context-pill">Tree derived</span>
+        <span class="context-pill">Governed actions</span>
+      </div>
+    </div>
+    <div class="cockpit-grid">
+      <nav class="mode-rail" aria-label="Cockpit modes">
+        <span>Modes</span>
+        <a href="/surface">Overview</a>
+        <a class="active" href="/surface/graph">MAP</a>
+        <a href="/surface/events/timeline">FLOW</a>
+        <a href="/surface/domains">INSPECT</a>
+        <a href="/surface/proposals">AUDIT</a>
+        <span>Queues</span>
+        <a href="/surface/decisions">Decisions</a>
+        <a href="/surface/reentry/parse-diff">Reentry</a>
+      </nav>
+      <main class="main-field">
+        <section class="hero">
+          <div>
+            <h1>Nexus Cockpit Graph</h1>
+            <p>MAP workbench for dynamic domain, evidence, governance, and relation navigation.</p>
+          </div>
+          <div class="evidence-rail">
+            <div><strong>Mode</strong>: MAP Workbench</div>
+            <div><strong>Mutation</strong>: read-only graph exploration</div>
+            <div><strong>Source</strong>: `/surface/graph.json` from live runtime</div>
+          </div>
+        </section>
+        <section class="panel map-workbench" data-map-workbench>
+          <div class="map-main">
+            <form class="map-control-bar" id="map-controls">
+              <label for="view">View
+                <select id="view" name="view">
+                  <option value="global">Global</option>
+                  <option value="domain">Domain</option>
+                  <option value="focus">Focus</option>
+                  <option value="governance">Governance</option>
+                  <option value="evidence">Evidence</option>
+                  <option value="reentry">Reentry</option>
+                  <option value="cross_domain">Cross-domain</option>
+                </select>
+              </label>
+              <label for="domain">Domain
+                <select id="domain" name="domain">
+                  <option value="">All domains</option>
+                  {% for domain in domains %}
+                  <option value="{{ domain.domain_id }}">{{ domain.name or domain.domain_id }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+              <label for="focus">Focus object
+                <input id="focus" name="focus" placeholder="entity id" />
+              </label>
+              <label for="depth">Depth
+                <input id="depth" name="depth" type="number" min="1" max="5" value="2" />
+              </label>
+              <label for="entity_type">Entity type
+                <input id="entity_type" name="entity_type" placeholder="person, concept" />
+              </label>
+              <label for="relation_type">Relation type
+                <input id="relation_type" name="relation_type" placeholder="references" />
+              </label>
+              <label for="status">Status
+                <input id="status" name="status" placeholder="proposed, validated" />
+              </label>
+              <label for="scope">Scope
+                <input id="scope" name="scope" placeholder="local, canonical" />
+              </label>
+              <label for="cross_domain">Cross-domain
+                <select id="cross_domain" name="cross_domain">
+                  <option value="show_all">Show all</option>
+                  <option value="proposed_only">Proposed only</option>
+                  <option value="hide">Hide</option>
+                  <option value="only">Only</option>
+                </select>
+              </label>
+              <label for="label_mode">Labels
+                <select id="label_mode" name="label_mode">
+                  <option value="key">Key</option>
+                  <option value="zoom">Zoom</option>
+                  <option value="all">All</option>
+                  <option value="off">Off</option>
+                </select>
+              </label>
+              <label for="color_mode">Color
+                <select id="color_mode" name="color_mode">
+                  <option value="by_domain">By domain</option>
+                  <option value="by_type">By type</option>
+                  <option value="by_status">By status</option>
+                  <option value="by_risk">By risk</option>
+                </select>
+              </label>
+              <label for="size_mode">Size
+                <select id="size_mode" name="size_mode">
+                  <option value="by_degree">By degree</option>
+                  <option value="uniform">Uniform</option>
+                  <option value="by_confidence">By confidence</option>
+                </select>
+              </label>
+              <button class="button-primary" id="apply-filters" type="submit">Apply</button>
+              <button id="reset-filters" type="button">Reset</button>
+              <button id="copy-link" type="button">Copy link</button>
+            </form>
+            <div class="preset-row" aria-label="MAP lens presets">
+              <span class="map-pill">Lenses</span>
+              <button type="button" data-preset="operational">Operational</button>
+              <button type="button" data-preset="governance">Governance Risk</button>
+              <button type="button" data-preset="evidence">Evidence</button>
+              <button type="button" data-preset="reentry">Reentry</button>
+              <button type="button" data-preset="cross_domain">Cross-domain</button>
+            </div>
+            <div class="graph-stage">
+              <svg id="graph" role="img" aria-label="Nexus relation graph"></svg>
+              <div class="empty-state" id="graph-empty">No graph objects match this view</div>
+              <div class="floating-toolbar" aria-label="Graph navigation controls">
+                <button type="button" id="zoom-in">Zoom +</button>
+                <button type="button" id="zoom-out">Zoom -</button>
+                <button type="button" id="fit-graph">Fit</button>
+                <button type="button" id="reset-view">Reset</button>
+                <button type="button" id="refresh-graph">Refresh</button>
+              </div>
+            </div>
+            <div class="event-strip" id="event-strip">MAP ready. Select an object to inspect evidence and governed routes.</div>
+          </div>
+          <aside class="control-panel" aria-label="Graph controls and inspection">
+            <section class="control-section">
+              <h2>Inspector</h2>
+              <div class="map-pill">Read-only surface. Actions route to governed pages.</div>
+            </section>
+            <section class="control-section">
+              <h2>View State</h2>
+              <div id="graph-state" class="meta-list">No graph loaded yet.</div>
+            </section>
+            <section class="inspector">
+              <div id="inspector-panel" class="inspector-card">
+                <h2>Nothing selected</h2>
+                <p>Select a node or relation to inspect status, evidence, confidence, events, and safe navigation paths.</p>
+              </div>
+            </section>
+          </aside>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

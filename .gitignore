@@ -1,0 +1,41 @@
+# Nexus — .gitignore
+
+# Runtime database (local executable truth — never committed)
+.nexus/
+
+# Output artifacts (ephemeral, tool-generated)
+output/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary OneDrive sync artifacts
+.tmp.driveupload/
+.tmp.drivedownload/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

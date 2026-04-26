@@ -1,0 +1,29 @@
+publication_timestamp: '2026-04-23T17:30:50Z'
+publication_version: 10
+freshness_status: fresh
+available_domains:
+- nexus-core
+- ux_human_day0_20260423
+- ux_agent_day0_20260423
+pending_proposals_count: 0
+remote_write_policy: read-only; structured proposals only in tree/inbox/proposals/
+published_object_views:
+  domain_overviews: 3
+  domain_operational_summaries: 3
+  pending_review_queues: 3
+  active_decision_queues: 3
+  recent_changes: 3
+  meeting_contexts: 3
+  project_states: 3
+  entity_snapshots: 4
+  relation_snapshots: 1
+  payload_snapshots: 0
+  projection_indexes: 3
+  domain_charters: 3
+  source_indexes: 3
+  ingestion_run_indexes: 3
+  authoring_summaries: 3
+  canonical_entity_indexes: 1
+  canonical_relation_indexes: 1
+  proposal_inbox_indexes: 1
+  governance_traces: 1

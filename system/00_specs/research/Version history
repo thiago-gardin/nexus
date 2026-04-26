@@ -1,0 +1,16 @@
+O Nexus saiu de **organização de conhecimento em arquivos** para **infraestrutura cognitiva institucional**.
+
+Linha curta:
+
+* **v0**: notas, Markdown, pastas e links; foco em organizar conhecimento.
+* **v1** *(09–15 mar 2026)*: MVP local operável com CLI, DuckDB, Markdown, API e cockpit inicial; sistema funciona, mas a leitura humana ainda é fraca.  
+* **v2** *(16 mar 2026)*: virada arquitetural; Nexus deixa de ser só produto local e passa a ser pensado como sistema com `core`, `modules`, `adapters`, `agents`, MCP-first e cockpit destacável. 
+* **v3** *(17–18 mar 2026)*: virada ontológica; Nexus vira **infraestrutura cognitiva operacional**, com grafo estrutural, cockpit como superfície operacional e simetria humano-agente como tese.   
+* **v4** *(consolida em 22 mar, estabiliza em 04 abr 2026)*: Nexus vira **infraestrutura cognitiva institucional**; domínios como unidade fundamental, governança explícita, auditabilidade, simetria humano-agente e arquitetura dual: memória institucional em Markdown/treefolder + camada operacional em DB/índices.   
+
+Em uma frase:
+
+> o drift principal foi **arquivo → relação → substrato → instituição**.
+
+https://github.com/ngthiagpgp/Nexus
+https://github.com/thiago-gardin/Nexus-V2---Google-IA-Studio-Bootstrap

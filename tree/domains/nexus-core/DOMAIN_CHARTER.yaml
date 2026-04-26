@@ -1,0 +1,5 @@
+domain_id: nexus-core
+active_domain_version: null
+domain_versions: []
+publication_note: Published from executable state; edit via cockpit/API/MCP local
+  operator, not by editing this file.

@@ -1,0 +1,23 @@
+domain_contract:
+  domain_id: ux_agent_day0_20260423
+  name: UX Agent Day0
+  description: Usability test domain created through MCP local operator
+  cognitive_purpose: Validate agent operational flow in local operator profile
+  source_types_supported: []
+  local_entity_types:
+  - project
+  relation_types:
+  - depends_on
+  payload_types: []
+  promotion_rules:
+  - manual_review
+  governance_dependencies:
+  - human_validation
+  status: active
+  version: 1
+  owner_human: null
+  owner_agent: null
+  active_domain_version_id: 5dcd979e-2602-4937-80b7-0b1bc4e1ec6b
+  active_domain_version_label: day0-agent
+  created_at: '2026-04-23T17:29:28.363213Z'
+  updated_at: '2026-04-23T17:29:28.363213Z'

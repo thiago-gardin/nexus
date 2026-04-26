@@ -1,0 +1,29 @@
+domain_contract:
+  domain_id: ux_human_day0_20260423
+  name: UX Human Day0
+  description: Usability test domain created from cockpit
+  cognitive_purpose: Validate human authoring flow in cockpit
+  source_types_supported:
+  - md
+  - json
+  - txt
+  local_entity_types:
+  - workspace
+  - project
+  - task
+  relation_types:
+  - depends_on
+  - evidenced_by
+  payload_types: []
+  promotion_rules:
+  - manual_review
+  governance_dependencies:
+  - human_validation
+  status: active
+  version: 1
+  owner_human: null
+  owner_agent: null
+  active_domain_version_id: a3284194-e196-44cb-80bd-3b8137400c0e
+  active_domain_version_label: day0-human
+  created_at: '2026-04-23T17:27:27.734910Z'
+  updated_at: '2026-04-23T17:27:27.734910Z'

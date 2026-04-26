@@ -1,0 +1,47 @@
+domain_id: ux_human_day0_20260423
+active_domain_version:
+  domain_version_id: a3284194-e196-44cb-80bd-3b8137400c0e
+  domain_id: ux_human_day0_20260423
+  version_label: day0-human
+  status: active
+  charter:
+    entrypoint: cockpit
+    purpose: Human usability flow
+  allowed_entity_types:
+  - project
+  - task
+  allowed_relation_types:
+  - depends_on
+  allowed_payload_types: []
+  required_fields:
+    project:
+    - workspace_path
+  promotion_rules:
+  - manual_review
+  created_at: '2026-04-23T17:27:48.333939Z'
+  activated_at: '2026-04-23T17:28:04.468471Z'
+  last_event_id: 88bc0d8b-d719-467a-a2ef-ab2fa8ec4632
+domain_versions:
+- domain_version_id: a3284194-e196-44cb-80bd-3b8137400c0e
+  domain_id: ux_human_day0_20260423
+  version_label: day0-human
+  status: active
+  charter:
+    entrypoint: cockpit
+    purpose: Human usability flow
+  allowed_entity_types:
+  - project
+  - task
+  allowed_relation_types:
+  - depends_on
+  allowed_payload_types: []
+  required_fields:
+    project:
+    - workspace_path
+  promotion_rules:
+  - manual_review
+  created_at: '2026-04-23T17:27:48.333939Z'
+  activated_at: '2026-04-23T17:28:04.468471Z'
+  last_event_id: 88bc0d8b-d719-467a-a2ef-ab2fa8ec4632
+publication_note: Published from executable state; edit via cockpit/API/MCP local
+  operator, not by editing this file.

@@ -1,0 +1,1175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ page_title }}</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #06090c;
+      --bg-2: #0b1014;
+      --panel: #11161c;
+      --panel-2: #161c24;
+      --panel-3: #0c1218;
+      --border: #232b36;
+      --border-strong: #354152;
+      --text: #edf2f7;
+      --muted: #a2afbd;
+      --quiet: #748093;
+      --accent: #65d9bf;
+      --accent-2: #7aa8ff;
+      --ok: #6fdb9a;
+      --warn: #f3bf68;
+      --risk: #ff7a7a;
+      --shadow: rgba(0, 0, 0, 0.38);
+      --drawer-width: 360px;
+      --panel-radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    html { overflow-x: hidden; }
+    body {
+      margin: 0;
+      min-width: 0;
+      background:
+        radial-gradient(circle at 14% 8%, rgba(101, 217, 191, 0.12), transparent 26rem),
+        radial-gradient(circle at 88% 0%, rgba(122, 168, 255, 0.08), transparent 28rem),
+        linear-gradient(180deg, #0b1014 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: "Aptos", "Segoe UI Variable", "Segoe UI", sans-serif;
+    }
+    a { color: var(--accent); }
+    .shell {
+      width: min(100%, 1540px);
+      margin: 0 auto;
+      padding: 18px clamp(14px, 2vw, 28px) 28px;
+    }
+    .context-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      background: rgba(17, 22, 28, 0.88);
+      border-radius: var(--panel-radius);
+      padding: 12px 14px;
+      box-shadow: 0 16px 44px var(--shadow);
+    }
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+      min-width: 0;
+    }
+    .brand-mark {
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .context-pill-row,
+    .status-row,
+    .inline-pills,
+    .quick-actions,
+    .tab-row,
+    .charter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .context-pill,
+    .status-pill,
+    .tag {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding: 5px 10px;
+      white-space: nowrap;
+    }
+    .status-pill.status-materialized { color: var(--ok); }
+    .status-pill.status-out_of_sync,
+    .status-pill.status-proposed,
+    .status-pill.status-contested { color: var(--warn); }
+    .status-pill.status-rejected { color: var(--risk); }
+    .status-pill.status-validated,
+    .status-pill.status-active { color: var(--ok); }
+    .cockpit-grid {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    .mode-rail {
+      position: sticky;
+      top: 18px;
+      display: grid;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: rgba(17, 22, 28, 0.86);
+      border-radius: var(--panel-radius);
+      padding: 12px 10px;
+      box-shadow: 0 16px 44px var(--shadow);
+    }
+    .mode-rail span {
+      color: var(--quiet);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      margin: 2px 6px;
+      text-transform: uppercase;
+    }
+    .mode-rail a {
+      display: block;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 9px 10px;
+      color: var(--text);
+      font-weight: 760;
+      text-decoration: none;
+    }
+    .mode-rail a:hover,
+    .mode-rail a:focus,
+    .mode-rail a.active {
+      border-color: var(--border-strong);
+      background: rgba(101, 217, 191, 0.10);
+      color: var(--accent);
+    }
+    .main-field { min-width: 0; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+      gap: 16px;
+      align-items: end;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(135deg, rgba(101, 217, 191, 0.08), rgba(122, 168, 255, 0.04)),
+        var(--panel);
+      border-radius: var(--panel-radius);
+      padding: 18px;
+      box-shadow: 0 18px 52px var(--shadow);
+      margin-bottom: 16px;
+    }
+    h1, h2, h3 { margin: 0; line-height: 1.15; }
+    h1 { font-size: clamp(1.4rem, 2.6vw, 2.3rem); }
+    h2 { font-size: 1rem; }
+    h3 { font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .evidence-rail,
+    .panel,
+    .side-card,
+    .stream-panel {
+      border: 1px solid var(--border);
+      border-radius: var(--panel-radius);
+      background: var(--panel);
+      box-shadow: 0 16px 44px var(--shadow);
+    }
+    .evidence-rail,
+    .side-card,
+    .stream-panel {
+      padding: 14px;
+    }
+    .workbench {
+      overflow: hidden;
+    }
+    .topbar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(140px, 1fr)) minmax(120px, 0.8fr) auto auto auto;
+      gap: 10px;
+      align-items: end;
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(17, 22, 28, 0.92);
+    }
+    .control-group {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 760;
+      letter-spacing: 0.02em;
+    }
+    select,
+    input,
+    textarea {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel-3);
+      color: var(--text);
+      font: inherit;
+      padding: 10px 12px;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 96px;
+    }
+    button,
+    .button-link {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel-2);
+      color: var(--text);
+      cursor: pointer;
+      text-decoration: none;
+      font: inherit;
+      font-weight: 760;
+      min-height: 40px;
+      padding: 9px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    button:hover,
+    button:focus,
+    .button-link:hover,
+    .button-link:focus {
+      border-color: var(--border-strong);
+      color: var(--accent);
+    }
+    .button-primary {
+      background: rgba(101, 217, 191, 0.12);
+      border-color: rgba(101, 217, 191, 0.38);
+      color: var(--accent);
+    }
+    .button-danger {
+      background: rgba(255, 122, 122, 0.12);
+      border-color: rgba(255, 122, 122, 0.34);
+      color: #ffb7b7;
+    }
+    .button-subtle {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .button-wide {
+      width: 100%;
+    }
+    .workbench-body {
+      display: grid;
+      grid-template-columns: var(--drawer-width) minmax(0, 1fr) 336px;
+      min-height: 720px;
+    }
+    .workbench[data-drawer-open="false"] .workbench-body {
+      grid-template-columns: 0 minmax(0, 1fr) 336px;
+    }
+    .action-drawer {
+      min-width: 0;
+      border-right: 1px solid var(--border);
+      background: rgba(17, 22, 28, 0.96);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+    }
+    .workbench[data-drawer-open="false"] .action-drawer {
+      visibility: hidden;
+    }
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .drawer-header .meta {
+      color: var(--quiet);
+      font-size: 0.78rem;
+    }
+    .drawer-copy,
+    .side-copy {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .drawer-panels {
+      overflow: auto;
+      min-height: 0;
+    }
+    .action-tab {
+      min-height: 32px;
+      padding: 7px 10px;
+      color: var(--muted);
+      background: transparent;
+    }
+    .action-tab.is-active {
+      border-color: rgba(101, 217, 191, 0.38);
+      background: rgba(101, 217, 191, 0.10);
+      color: var(--accent);
+    }
+    .action-panel {
+      display: none;
+      padding: 14px;
+      gap: 12px;
+    }
+    .action-panel.is-active {
+      display: grid;
+    }
+    .field-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .field-row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .field {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 640;
+    }
+    .field small {
+      color: var(--quiet);
+      font-size: 0.75rem;
+    }
+    .field-hint {
+      color: var(--quiet);
+      font-size: 0.76rem;
+    }
+    .toggle-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .toggle-row input { width: auto; }
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .drawer-note,
+    .message-box {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .message-box.error {
+      border-color: rgba(255, 122, 122, 0.34);
+      background: rgba(255, 122, 122, 0.08);
+    }
+    .message-box.receipt {
+      border-color: rgba(101, 217, 191, 0.34);
+      background: rgba(101, 217, 191, 0.08);
+    }
+    .drawer-list,
+    .stream-list,
+    .inspection-list {
+      display: grid;
+      gap: 8px;
+    }
+    .drawer-list-item,
+    .stream-item,
+    .inspection-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 10px 12px;
+    }
+    .drawer-list-item strong,
+    .stream-item strong,
+    .inspection-item strong { display: block; }
+    .map-stage {
+      position: relative;
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      background:
+        radial-gradient(circle at 50% 46%, rgba(101, 217, 191, 0.07), transparent 28rem),
+        linear-gradient(180deg, #0b1014, #06090c);
+    }
+    .lens-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .graph-stage {
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+    }
+    #graph {
+      width: 100%;
+      min-height: 620px;
+      display: block;
+      cursor: grab;
+      touch-action: none;
+    }
+    #graph:active { cursor: grabbing; }
+    .empty-state {
+      position: absolute;
+      inset: 0;
+      display: none;
+      place-items: center;
+      pointer-events: none;
+      color: var(--quiet);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+    }
+    .empty-state.visible { display: grid; }
+    .floating-toolbar {
+      position: absolute;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(17, 22, 28, 0.92);
+      box-shadow: 0 18px 52px var(--shadow);
+      z-index: 5;
+    }
+    .floating-toolbar button {
+      min-height: 30px;
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+    .event-strip {
+      border-top: 1px solid var(--border);
+      padding: 10px 14px;
+      color: var(--muted);
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-size: 0.78rem;
+    }
+    .side-rail {
+      border-left: 1px solid var(--border);
+      background: rgba(17, 22, 28, 0.94);
+      display: grid;
+      grid-template-rows: auto auto auto minmax(0, 1fr);
+      gap: 0;
+      min-width: 0;
+    }
+    .side-section {
+      border-bottom: 1px solid var(--border);
+      padding: 14px;
+    }
+    .side-section:last-child {
+      border-bottom: 0;
+      overflow: auto;
+    }
+    .inspector-card {
+      display: grid;
+      gap: 12px;
+    }
+    .inspector-card h2 {
+      font-size: 1.1rem;
+      word-break: break-word;
+    }
+    .meta-list {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-size: 0.78rem;
+      overflow-wrap: anywhere;
+    }
+    .inspector-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .link {
+      stroke: var(--border-strong);
+      stroke-opacity: 0.62;
+      stroke-width: 1.8;
+      cursor: pointer;
+    }
+    .link.cross-domain {
+      stroke: var(--warn);
+      stroke-dasharray: 7 4;
+    }
+    .link.selected,
+    .link.highlighted {
+      stroke: var(--accent);
+      stroke-opacity: 1;
+      stroke-width: 3;
+    }
+    .node { cursor: pointer; }
+    .node circle {
+      stroke: rgba(237, 242, 247, 0.68);
+      stroke-width: 1.6;
+    }
+    .node text {
+      fill: var(--text);
+      font-size: 12px;
+      font-weight: 760;
+      paint-order: stroke;
+      pointer-events: none;
+      stroke: #06090c;
+      stroke-linejoin: round;
+      stroke-width: 4px;
+    }
+    .node.selected circle,
+    .node.highlighted circle {
+      stroke: var(--accent);
+      stroke-width: 3;
+      filter: drop-shadow(0 0 10px rgba(101, 217, 191, 0.44));
+    }
+    .dimmed { opacity: 0.16; }
+    .stream-panel {
+      margin-top: 16px;
+    }
+    .stream-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .stream-item {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+    }
+    .stream-item time {
+      color: var(--quiet);
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-size: 0.76rem;
+    }
+    .empty-copy {
+      color: var(--quiet);
+      font-size: 0.84rem;
+    }
+    @media (max-width: 1320px) {
+      .topbar {
+        grid-template-columns: repeat(4, minmax(140px, 1fr));
+      }
+      .topbar > .control-group:last-of-type,
+      .topbar > button,
+      .topbar > a {
+        grid-column: span 1;
+      }
+      .workbench-body {
+        grid-template-columns: 320px minmax(0, 1fr) 312px;
+      }
+    }
+    @media (max-width: 1040px) {
+      .cockpit-grid,
+      .hero,
+      .workbench-body {
+        display: block;
+      }
+      .mode-rail {
+        position: static;
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        margin-bottom: 12px;
+      }
+      .mode-rail span { display: none; }
+      .mode-rail a { flex: 0 0 auto; }
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+      .action-drawer {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .side-rail {
+        border-left: 0;
+        border-top: 1px solid var(--border);
+      }
+      .floating-toolbar {
+        left: 12px;
+        right: 12px;
+        transform: none;
+        justify-content: center;
+      }
+      .stream-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <script src="/static/vendor/d3.v7.9.0.min.js"></script>
+  <script id="workbench-payload" type="application/json">{{ workbench_payload | tojson }}</script>
+  <script src="/static/cockpit_map.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <div class="context-bar" aria-label="Global cockpit context">
+      <div class="brand">
+        <span class="brand-mark">Nexus</span>
+        <span>Institutional Cockpit</span>
+      </div>
+      <div class="context-pill-row">
+        <span class="context-pill">DB authority</span>
+        <span class="context-pill">Tree derived</span>
+        <span class="context-pill">Governed actions</span>
+      </div>
+    </div>
+    <div class="cockpit-grid">
+      <nav class="mode-rail" aria-label="Cockpit modes">
+        <span>Modes</span>
+        <a href="/surface">Overview</a>
+        <a class="{{ 'active' if page_mode == 'operate' else '' }}" href="/surface/operate{% if workspace.domain_id %}?domain_id={{ workspace.domain_id }}{% endif %}">Operate</a>
+        <a class="{{ 'active' if page_mode == 'graph' else '' }}" href="/surface/graph{% if workspace.domain_id %}?domain={{ workspace.domain_id }}{% endif %}">MAP</a>
+        <a href="/surface/events/timeline">FLOW</a>
+        <a href="/surface/domains">INSPECT</a>
+        <a href="/surface/proposals">AUDIT</a>
+        <span>Queues</span>
+        <a href="/surface/decisions">Decisions</a>
+        <a href="/surface/reentry/parse-diff">Reentry</a>
+      </nav>
+      <main class="main-field">
+        <section class="hero">
+          <div>
+            <h1>{{ page_heading }}</h1>
+            <p>{{ page_subtitle }}</p>
+          </div>
+          <div class="evidence-rail">
+            <div><strong>Mode</strong>: {{ 'Unified operate workbench' if page_mode == 'operate' else 'Unified map workbench' }}</div>
+            <div><strong>Mutation</strong>: {{ 'governed local authoring' if page_mode == 'operate' else 'graph-led inspection with action drawer available' }}</div>
+            <div><strong>Source</strong>: `/surface/graph.json` + live operate context</div>
+          </div>
+        </section>
+
+        <section class="panel workbench" data-workbench-root data-page-mode="{{ page_mode }}" data-drawer-open="{{ 'true' if drawer_open else 'false' }}">
+          <form class="topbar" id="map-controls">
+            <label class="control-group" for="domain">Domain
+              <select id="domain" name="domain">
+                <option value="">All domains</option>
+                {% for domain in domains %}
+                <option value="{{ domain.domain_id }}" {% if graph_filters.domain == domain.domain_id %}selected{% endif %}>{{ domain.name or domain.domain_id }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label class="control-group" for="focus">Focus
+              <select id="focus" name="focus">
+                <option value="">Select object</option>
+                {% for option in focus_options %}
+                <option value="{{ option.id }}" {% if graph_filters.focus == option.id %}selected{% endif %}>{{ option.label }}{% if option.entity_type %} · {{ option.entity_type }}{% endif %}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label class="control-group" for="depth">Depth
+              <input id="depth" name="depth" type="number" min="1" max="5" value="{{ graph_filters.depth }}" />
+            </label>
+            <label class="control-group" for="view">Lens
+              <select id="view" name="view">
+                {% for value, label in [('global','Global'), ('domain','Domain'), ('focus','Focus'), ('governance','Governance'), ('evidence','Evidence'), ('reentry','Reentry'), ('cross_domain','Cross-domain')] %}
+                <option value="{{ value }}" {% if graph_filters.view == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label class="control-group" for="cross_domain">Cross-domain
+              <select id="cross_domain" name="cross_domain">
+                {% for value, label in [('show_all','Show all'), ('proposed_only','Proposed only'), ('hide','Hide'), ('only','Only')] %}
+                <option value="{{ value }}" {% if graph_filters.cross_domain == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <button class="button-primary" id="apply-filters" type="submit">Apply</button>
+            <button class="button-subtle" id="reset-filters" type="button">Reset</button>
+            <button class="button-subtle" id="copy-link" type="button">Copy link</button>
+            <button class="button-subtle" id="toggle-drawer" type="button" aria-expanded="{{ 'true' if drawer_open else 'false' }}">Actions</button>
+          </form>
+
+          <div class="workbench-body">
+            <aside class="action-drawer" aria-label="Action drawer">
+              <div class="drawer-header">
+                <div>
+                  <h2>Action Drawer</h2>
+                  <div class="meta">Operate without IDs or raw JSON.</div>
+                </div>
+                <button class="button-subtle" type="button" id="close-drawer">Close</button>
+              </div>
+              <div class="drawer-copy">
+                <div class="status-row">
+                  <span class="status-pill status-{{ workspace.publication.status }}">{{ workspace.publication.status }}</span>
+                  <span class="status-pill status-{{ workspace.domain_status or 'none' }}">{{ workspace.domain_name or 'No domain selected' }}</span>
+                  <span class="status-pill status-{{ workspace.active_domain_version_label or 'inactive' }}">{{ workspace.active_domain_version_label or 'inactive charter' }}</span>
+                </div>
+              </div>
+              <div class="drawer-panels">
+                <div class="tab-row" style="padding: 12px 14px 0;">
+                  {% for tab in action_tabs %}
+                  <button type="button" class="action-tab {{ 'is-active' if default_action == tab.id else '' }}" data-action-tab="{{ tab.id }}">{{ tab.label }}</button>
+                  {% endfor %}
+                </div>
+
+                <section class="action-panel {{ 'is-active' if default_action == 'domain' else '' }}" data-action-panel="domain">
+                  <div class="drawer-note">
+                    <strong>Domain setup</strong>
+                    <p>Create the domain, register the first charter version, then activate it. Technical IDs are generated automatically unless you explicitly override them.</p>
+                  </div>
+                  {% if receipt %}
+                  <div class="message-box receipt">
+                    <strong>{{ receipt.title }}</strong>
+                    <p>{{ receipt.result }}</p>
+                  </div>
+                  {% endif %}
+                  {% if error %}
+                  <div class="message-box error">
+                    <strong>{{ error.title }}</strong>
+                    <p>{{ error.detail }}</p>
+                  </div>
+                  {% endif %}
+                  <form method="post" action="/surface/actions/domains" class="field-grid" data-human-form="domain">
+                    <input type="hidden" name="_context_domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <input type="hidden" name="_context_active_domain_version_id" value="{{ workspace.active_domain_version_id or '' }}" />
+                    <input type="hidden" name="_context_last_object_type" value="{{ workspace.last_object.type if workspace.last_object else '' }}" />
+                    <input type="hidden" name="_context_last_object_id" value="{{ workspace.last_object.id if workspace.last_object else '' }}" />
+                    <input type="hidden" name="domain_id" id="domain-id-hidden" value="{{ form_data.get('domain_id', '') }}" />
+                    <label class="field">Name
+                      <input type="text" name="name" id="domain-name" value="{{ form_data.get('name', '') }}" required />
+                    </label>
+                    <div class="field-row">
+                      <label class="field">Description
+                        <textarea name="description" rows="3" required>{{ form_data.get('description', '') }}</textarea>
+                      </label>
+                      <label class="field">Cognitive Purpose
+                        <textarea name="cognitive_purpose" rows="3" required>{{ form_data.get('cognitive_purpose', '') }}</textarea>
+                      </label>
+                    </div>
+                    <div class="field-row">
+                      <label class="field">Suggested domain ID
+                        <input type="text" id="domain-id-preview" value="{{ form_data.get('domain_id', '') }}" readonly />
+                        <small>Generated from the name if left empty.</small>
+                      </label>
+                      <label class="field">Status
+                        <select name="status">
+                          {% for option in ['active', 'draft', 'paused'] %}
+                          <option value="{{ option }}" {% if form_data.get('status', 'active') == option %}selected{% endif %}>{{ option }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                    </div>
+                    <div class="field-row">
+                      <label class="field">Source types
+                        <input type="text" name="source_types_supported" value="{{ form_data.get('source_types_supported', '') }}" placeholder="md, json, txt" />
+                      </label>
+                      <label class="field">Entity types
+                        <input type="text" name="local_entity_types" value="{{ form_data.get('local_entity_types', '') }}" placeholder="project, task, decision" />
+                      </label>
+                    </div>
+                    <label class="field">Relation types
+                      <input type="text" name="relation_types" value="{{ form_data.get('relation_types', '') }}" placeholder="depends_on, references" />
+                    </label>
+                    <div class="form-actions">
+                      <button class="button-primary" type="submit">Create domain</button>
+                      <label class="toggle-row"><input type="checkbox" name="materialize_after_success" {% if form_data.get('materialize_after_success') %}checked{% endif %} /> materialize after success</label>
+                    </div>
+                  </form>
+
+                  {% if workspace.domain_id %}
+                  <form method="post" action="/surface/actions/domain-versions" class="field-grid" data-human-form="domain-version">
+                    <input type="hidden" name="_context_domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <input type="hidden" name="_context_last_object_type" value="{{ workspace.last_object.type if workspace.last_object else '' }}" />
+                    <input type="hidden" name="_context_last_object_id" value="{{ workspace.last_object.id if workspace.last_object else '' }}" />
+                    <input type="hidden" name="domain_id" value="{{ workspace.domain_id }}" />
+                    <label class="field">Version label
+                      <input type="text" name="version_label" value="{{ form_data.get('version_label', workspace.active_domain_version_label or 'day0') }}" required />
+                    </label>
+                    <div class="field-row">
+                      <label class="field">Allowed entity types
+                        <input type="text" name="allowed_entity_types" value="{{ form_data.get('allowed_entity_types', workspace.entity_type_options | join(', ')) }}" placeholder="project, task" />
+                      </label>
+                      <label class="field">Allowed relation types
+                        <input type="text" name="allowed_relation_types" value="{{ form_data.get('allowed_relation_types', workspace.relation_type_options | join(', ')) }}" placeholder="depends_on, references" />
+                      </label>
+                    </div>
+                    <label class="field">Required fields by type
+                      <textarea name="required_fields_text" rows="4" placeholder="project: workspace_path, status">{{ form_data.get('required_fields_text', required_fields_text) }}</textarea>
+                      <small>One line per entity type. Example: <code>project: workspace_path, status</code></small>
+                    </label>
+                    <label class="field">Charter purpose
+                      <textarea name="charter_purpose" rows="3" placeholder="What this version is for">{{ form_data.get('charter_purpose', charter_purpose) }}</textarea>
+                    </label>
+                    <div class="form-actions">
+                      <button class="button-primary" type="submit">Create version</button>
+                      <label class="toggle-row"><input type="checkbox" name="materialize_after_success" {% if form_data.get('materialize_after_success') %}checked{% endif %} /> materialize after success</label>
+                    </div>
+                  </form>
+
+                  <form method="post" action="/surface/actions/domain-versions/activate" class="field-grid">
+                    <input type="hidden" name="_context_domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <input type="hidden" name="_context_last_object_type" value="{{ workspace.last_object.type if workspace.last_object else '' }}" />
+                    <input type="hidden" name="_context_last_object_id" value="{{ workspace.last_object.id if workspace.last_object else '' }}" />
+                    <label class="field">Activate version
+                      <select name="domain_version_id" required>
+                        <option value="">Select version</option>
+                        {% for version in workspace.domain_versions %}
+                        <option value="{{ version.domain_version_id }}" {% if (form_data.get('domain_version_id') or workspace.active_domain_version_id) == version.domain_version_id %}selected{% endif %}>{{ version.version_label }} · {{ version.status or 'draft' }}</option>
+                        {% endfor %}
+                      </select>
+                    </label>
+                    <label class="field">Reason
+                      <input type="text" name="reason" value="{{ form_data.get('reason', 'Activate cockpit charter') }}" />
+                    </label>
+                    <div class="form-actions">
+                      <button class="button-primary" type="submit">Activate version</button>
+                      <label class="toggle-row"><input type="checkbox" name="materialize_after_success" {% if form_data.get('materialize_after_success') %}checked{% endif %} /> materialize after success</label>
+                    </div>
+                  </form>
+                  {% endif %}
+                </section>
+
+                <section class="action-panel {{ 'is-active' if default_action == 'entity' else '' }}" data-action-panel="entity">
+                  <div class="drawer-note">
+                    <strong>Entity authoring</strong>
+                    <p>The form adapts to the active domain schema. Dependencies and IDs stay out of the typing path.</p>
+                  </div>
+                  <form method="post" action="/surface/actions/entities" class="field-grid" data-human-form="entity">
+                    <input type="hidden" name="_context_domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <input type="hidden" name="_context_last_object_type" value="{{ workspace.last_object.type if workspace.last_object else '' }}" />
+                    <input type="hidden" name="_context_last_object_id" value="{{ workspace.last_object.id if workspace.last_object else '' }}" />
+                    <input type="hidden" name="domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <input type="hidden" name="attributes_json" id="entity-attributes-json" value="{{ form_data.get('attributes_json', '') }}" />
+                    <label class="field">Entity type
+                      <select name="entity_type" id="entity-type-select" required {% if not workspace.domain_id %}disabled{% endif %}>
+                        <option value="">Select type</option>
+                        {% for entity_type in workspace.entity_type_options %}
+                        <option value="{{ entity_type }}" {% if form_data.get('entity_type') == entity_type %}selected{% endif %}>{{ entity_type }}</option>
+                        {% endfor %}
+                      </select>
+                    </label>
+                    <div class="field-row">
+                      <label class="field">Label
+                        <input type="text" name="label" value="{{ form_data.get('label', '') }}" required {% if not workspace.domain_id %}disabled{% endif %} />
+                      </label>
+                      <label class="field">Technical ID
+                        <input type="text" value="Generated automatically" readonly />
+                      </label>
+                    </div>
+                    <label class="field">Short description
+                      <textarea name="short_description" rows="3" {% if not workspace.domain_id %}disabled{% endif %}>{{ form_data.get('short_description', '') }}</textarea>
+                    </label>
+                    <div class="field-grid" id="entity-dynamic-fields" data-attributes-initial="{{ form_data.get('attributes_json', '{}') | e }}"></div>
+                    <div class="form-actions">
+                      <button class="button-primary" type="submit" {% if not workspace.domain_id %}disabled{% endif %}>Create entity</button>
+                      <label class="toggle-row"><input type="checkbox" name="materialize_after_success" {% if form_data.get('materialize_after_success') %}checked{% endif %} {% if not workspace.domain_id %}disabled{% endif %} /> materialize after success</label>
+                    </div>
+                  </form>
+                </section>
+
+                <section class="action-panel {{ 'is-active' if default_action == 'relation' else '' }}" data-action-panel="relation">
+                  <div class="drawer-note">
+                    <strong>Relation authoring</strong>
+                    <p>Select entities by label, then assert the relation type allowed by the active domain version.</p>
+                  </div>
+                  <form method="post" action="/surface/actions/relations" class="field-grid" data-human-form="relation">
+                    <input type="hidden" name="_context_domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <input type="hidden" name="_context_last_object_type" value="{{ workspace.last_object.type if workspace.last_object else '' }}" />
+                    <input type="hidden" name="_context_last_object_id" value="{{ workspace.last_object.id if workspace.last_object else '' }}" />
+                    <input type="hidden" name="domain_context" value="{{ workspace.domain_id or '' }}" />
+                    <div class="field-row">
+                      <label class="field">Source
+                        <select name="source_entity_id" id="relation-source-select" required {% if not workspace.entity_picker_options %}disabled{% endif %}>
+                          <option value="">Select source</option>
+                          {% for option in workspace.entity_picker_options %}
+                          <option value="{{ option.id }}" {% if form_data.get('source_entity_id') == option.id %}selected{% endif %}>{{ option.label }} · {{ option.entity_type }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <label class="field">Target
+                        <select name="target_entity_id" id="relation-target-select" required {% if not workspace.entity_picker_options %}disabled{% endif %}>
+                          <option value="">Select target</option>
+                          {% for option in workspace.entity_picker_options %}
+                          <option value="{{ option.id }}" {% if form_data.get('target_entity_id') == option.id %}selected{% endif %}>{{ option.label }} · {{ option.entity_type }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                    </div>
+                    <label class="field">Relation type
+                      <select name="relation_type" id="relation-type-select" required {% if not workspace.relation_type_options %}disabled{% endif %}>
+                        <option value="">Select relation</option>
+                        {% for relation_type in workspace.relation_type_options %}
+                        <option value="{{ relation_type }}" {% if form_data.get('relation_type') == relation_type %}selected{% endif %}>{{ relation_type }}</option>
+                        {% endfor %}
+                      </select>
+                    </label>
+                    <label class="field">Technical ID
+                      <input type="text" id="relation-id-preview" value="Generated automatically" readonly />
+                    </label>
+                    <div class="form-actions">
+                      <button class="button-primary" type="submit" {% if not workspace.entity_picker_options %}disabled{% endif %}>Create relation</button>
+                      <label class="toggle-row"><input type="checkbox" name="materialize_after_success" {% if form_data.get('materialize_after_success') %}checked{% endif %} {% if not workspace.entity_picker_options %}disabled{% endif %} /> materialize after success</label>
+                    </div>
+                  </form>
+                </section>
+
+                <section class="action-panel {{ 'is-active' if default_action == 'source' else '' }}" data-action-panel="source">
+                  <div class="drawer-note">
+                    <strong>Source and ingestion</strong>
+                    <p>Register source metadata or run a lightweight Day 0 ingestion without leaving the workbench.</p>
+                  </div>
+                  <form method="post" action="/surface/actions/sources" class="field-grid">
+                    <input type="hidden" name="_context_domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <input type="hidden" name="_context_last_object_type" value="{{ workspace.last_object.type if workspace.last_object else '' }}" />
+                    <input type="hidden" name="_context_last_object_id" value="{{ workspace.last_object.id if workspace.last_object else '' }}" />
+                    <input type="hidden" name="domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <div class="field-row">
+                      <label class="field">Source type
+                        <select name="source_type" {% if not workspace.domain_id %}disabled{% endif %}>
+                          {% for source_type in workspace.source_type_options %}
+                          <option value="{{ source_type }}" {% if form_data.get('source_type', 'md') == source_type %}selected{% endif %}>{{ source_type }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <label class="field">Source URI
+                        <input type="text" name="source_uri" value="{{ form_data.get('source_uri', '') }}" placeholder="file path or logical URI" {% if not workspace.domain_id %}disabled{% endif %} />
+                      </label>
+                    </div>
+                    <label class="field">Content
+                      <textarea name="content" rows="5" {% if not workspace.domain_id %}disabled{% endif %}>{{ form_data.get('content', '') }}</textarea>
+                    </label>
+                    <div class="form-actions">
+                      <button class="button-primary" type="submit" {% if not workspace.domain_id %}disabled{% endif %}>Register source</button>
+                      <label class="toggle-row"><input type="checkbox" name="materialize_after_success" {% if form_data.get('materialize_after_success') %}checked{% endif %} {% if not workspace.domain_id %}disabled{% endif %} /> materialize after success</label>
+                    </div>
+                  </form>
+
+                  <form method="post" action="/surface/actions/ingestion-runs" class="field-grid">
+                    <input type="hidden" name="_context_domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <input type="hidden" name="_context_last_object_type" value="{{ workspace.last_object.type if workspace.last_object else '' }}" />
+                    <input type="hidden" name="_context_last_object_id" value="{{ workspace.last_object.id if workspace.last_object else '' }}" />
+                    <input type="hidden" name="domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <div class="field-row">
+                      <label class="field">Source type
+                        <select name="source_type" {% if not workspace.domain_id %}disabled{% endif %}>
+                          {% for source_type in workspace.source_type_options %}
+                          <option value="{{ source_type }}" {% if form_data.get('source_type', 'json') == source_type %}selected{% endif %}>{{ source_type }}</option>
+                          {% endfor %}
+                        </select>
+                      </label>
+                      <label class="field">Mode
+                        <input type="text" value="generic ingestion" readonly />
+                      </label>
+                    </div>
+                    <label class="field">Content
+                      <textarea name="content" rows="6" {% if not workspace.domain_id %}disabled{% endif %}>{{ form_data.get('content', '') }}</textarea>
+                    </label>
+                    <div class="form-actions">
+                      <button class="button-primary" type="submit" {% if not workspace.domain_id %}disabled{% endif %}>Run ingestion</button>
+                      <label class="toggle-row"><input type="checkbox" name="materialize_after_success" {% if form_data.get('materialize_after_success') %}checked{% endif %} {% if not workspace.domain_id %}disabled{% endif %} /> materialize after success</label>
+                    </div>
+                  </form>
+                </section>
+
+                <section class="action-panel {{ 'is-active' if default_action == 'review' else '' }}" data-action-panel="review">
+                  <div class="drawer-note">
+                    <strong>Validation and publication</strong>
+                    <p>Pick pending objects by label, then validate, reject, or publish from the same workbench.</p>
+                  </div>
+                  <form method="post" action="/surface/actions/objects/validate" class="field-grid" data-review-form="validate">
+                    <input type="hidden" name="_context_domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <input type="hidden" name="_context_last_object_type" value="{{ workspace.last_object.type if workspace.last_object else '' }}" />
+                    <input type="hidden" name="_context_last_object_id" value="{{ workspace.last_object.id if workspace.last_object else '' }}" />
+                    <input type="hidden" name="object_type" id="validate-object-type" value="{{ form_data.get('object_type', workspace.last_object.type if workspace.last_object else '') }}" />
+                    <input type="hidden" name="object_id" id="validate-object-id" value="{{ form_data.get('object_id', workspace.last_object.id if workspace.last_object else '') }}" />
+                    <label class="field">Pending object
+                      <select data-object-picker="validate" {% if not workspace.object_picker_options %}disabled{% endif %}>
+                        <option value="">Select object</option>
+                        {% for option in workspace.object_picker_options %}
+                        <option value="{{ option.value }}" {% if (form_data.get('object_type', '') ~ ':' ~ form_data.get('object_id', '')) == option.value %}selected{% endif %}>{{ option.label }} · {{ option.description }}</option>
+                        {% endfor %}
+                      </select>
+                    </label>
+                    <label class="field">Reason
+                      <input type="text" name="reason" value="{{ form_data.get('reason', 'Validated in workbench') }}" />
+                    </label>
+                    <div class="form-actions">
+                      <button class="button-primary" type="submit" {% if not workspace.object_picker_options %}disabled{% endif %}>Validate object</button>
+                      <label class="toggle-row"><input type="checkbox" name="materialize_after_success" {% if form_data.get('materialize_after_success') %}checked{% endif %} {% if not workspace.object_picker_options %}disabled{% endif %} /> materialize after success</label>
+                    </div>
+                  </form>
+
+                  <form method="post" action="/surface/actions/objects/reject" class="field-grid" data-review-form="reject">
+                    <input type="hidden" name="_context_domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <input type="hidden" name="_context_last_object_type" value="{{ workspace.last_object.type if workspace.last_object else '' }}" />
+                    <input type="hidden" name="_context_last_object_id" value="{{ workspace.last_object.id if workspace.last_object else '' }}" />
+                    <input type="hidden" name="object_type" id="reject-object-type" value="{{ form_data.get('object_type', workspace.last_object.type if workspace.last_object else '') }}" />
+                    <input type="hidden" name="object_id" id="reject-object-id" value="{{ form_data.get('object_id', workspace.last_object.id if workspace.last_object else '') }}" />
+                    <label class="field">Pending object
+                      <select data-object-picker="reject" {% if not workspace.object_picker_options %}disabled{% endif %}>
+                        <option value="">Select object</option>
+                        {% for option in workspace.object_picker_options %}
+                        <option value="{{ option.value }}" {% if (form_data.get('object_type', '') ~ ':' ~ form_data.get('object_id', '')) == option.value %}selected{% endif %}>{{ option.label }} · {{ option.description }}</option>
+                        {% endfor %}
+                      </select>
+                    </label>
+                    <label class="field">Reason
+                      <input type="text" name="reason" value="{{ form_data.get('reason', '') }}" required />
+                    </label>
+                    <div class="form-actions">
+                      <button class="button-danger" type="submit" {% if not workspace.object_picker_options %}disabled{% endif %}>Reject object</button>
+                      <label class="toggle-row"><input type="checkbox" name="materialize_after_success" {% if form_data.get('materialize_after_success') %}checked{% endif %} {% if not workspace.object_picker_options %}disabled{% endif %} /> materialize after success</label>
+                    </div>
+                  </form>
+
+                  <form method="post" action="/surface/actions/materialize" class="field-grid">
+                    <input type="hidden" name="_context_last_object_type" value="{{ workspace.last_object.type if workspace.last_object else '' }}" />
+                    <input type="hidden" name="_context_last_object_id" value="{{ workspace.last_object.id if workspace.last_object else '' }}" />
+                    <input type="hidden" name="domain_id" value="{{ workspace.domain_id or '' }}" />
+                    <div class="form-actions">
+                      <button class="button-primary button-wide" type="submit" {% if not workspace.domain_id %}disabled{% endif %}>Materialize current domain</button>
+                    </div>
+                  </form>
+                </section>
+              </div>
+            </aside>
+
+            <div class="map-stage">
+              <div class="lens-row" aria-label="MAP lens presets">
+                <span class="tag">Lenses</span>
+                <button type="button" class="button-subtle" data-preset="operational">Operational</button>
+                <button type="button" class="button-subtle" data-preset="governance">Governance Risk</button>
+                <button type="button" class="button-subtle" data-preset="evidence">Evidence</button>
+                <button type="button" class="button-subtle" data-preset="reentry">Reentry</button>
+                <button type="button" class="button-subtle" data-preset="cross_domain">Cross-domain</button>
+              </div>
+              <div class="graph-stage">
+                <svg id="graph" role="img" aria-label="Nexus relation graph"></svg>
+                <div class="empty-state" id="graph-empty">No data to explore</div>
+                <div class="floating-toolbar" aria-label="Graph navigation controls">
+                  <button type="button" id="zoom-in">Zoom +</button>
+                  <button type="button" id="zoom-out">Zoom -</button>
+                  <button type="button" id="fit-graph">Fit</button>
+                  <button type="button" id="reset-view">Reset</button>
+                  <button type="button" id="refresh-graph">Refresh</button>
+                </div>
+              </div>
+              <div class="event-strip" id="event-strip">Workbench ready. Select an object to inspect, author, validate, and publish in one flow.</div>
+            </div>
+
+            <aside class="side-rail" aria-label="Workbench inspection and publication">
+              <section class="side-section">
+                <h3>Inspector</h3>
+                <div id="inspector-panel" class="inspector-card">
+                  <h2>Nothing selected</h2>
+                  <p>Select a node or relation to inspect status, evidence, confidence, events, and context-aware next actions.</p>
+                </div>
+              </section>
+              <section class="side-section">
+                <h3>Charter</h3>
+                <div class="inspection-list">
+                  <div class="inspection-item">
+                    <strong>{{ workspace.domain_name or 'No domain selected' }}</strong>
+                    <div class="charter-row">
+                      {% for item in workspace.entity_type_options %}
+                      <span class="tag">{{ item }}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="inspection-item">
+                    <strong>Relations</strong>
+                    <div class="charter-row">
+                      {% for item in workspace.relation_type_options %}
+                      <span class="tag">{{ item }}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section class="side-section">
+                <h3>Publication</h3>
+                <div class="inspection-list">
+                  <div class="inspection-item">
+                    <strong>Status</strong>
+                    <div class="status-row">
+                      <span class="status-pill status-{{ workspace.publication.status }}">{{ workspace.publication.status }}</span>
+                      {% if workspace.publication.last_materialized_at %}
+                      <span class="status-pill">{{ workspace.publication.last_materialized_at }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if receipt %}
+                  <div class="inspection-item">
+                    <strong>{{ receipt.title }}</strong>
+                    <p>{{ receipt.result }}</p>
+                    {% if receipt.links %}
+                    <div class="quick-actions" style="margin-top:8px;">
+                      {% for label, href in receipt.links %}
+                      <a class="button-link button-subtle" href="{{ href }}">{{ label }}</a>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                  </div>
+                  {% endif %}
+                  {% if error %}
+                  <div class="inspection-item">
+                    <strong>{{ error.title }}</strong>
+                    <p>{{ error.detail }}</p>
+                  </div>
+                  {% endif %}
+                </div>
+              </section>
+              <section class="side-section">
+                <h3>Decision Stream</h3>
+                <div class="inspection-list">
+                  {% if workspace.active_decisions %}
+                    {% for item in workspace.active_decisions[:6] %}
+                    <div class="inspection-item">
+                      <strong>{{ item.label }}</strong>
+                      <div class="status-row">
+                        <span class="status-pill status-{{ item.status }}">{{ item.status }}</span>
+                        <span class="status-pill">{{ item.kind }}</span>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  {% else %}
+                  <div class="empty-copy">No active decisions in this scope.</div>
+                  {% endif %}
+                </div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <section class="stream-panel">
+          <div class="stream-header">
+            <div>
+              <h2>Live Event Stream</h2>
+              <p>Recent changes, publication state, and review pressure stay visible while you operate.</p>
+            </div>
+            <div class="quick-actions">
+              <a class="button-link button-subtle" href="/surface/events/timeline">Open timeline</a>
+              {% if workspace.domain_id %}
+              <a class="button-link button-subtle" href="/surface/domains/{{ workspace.domain_id }}">Open domain</a>
+              {% endif %}
+            </div>
+          </div>
+          <div class="stream-list">
+            {% if workspace.recent_changes %}
+              {% for item in workspace.recent_changes %}
+              <div class="stream-item">
+                <time>{{ item.created_at or 'n/a' }}</time>
+                <div>
+                  <strong>{{ item.label }}</strong>
+                  <div>{{ item.event_type }}</div>
+                </div>
+                <span class="status-pill status-{{ item.status or 'unknown' }}">{{ item.status or item.target_object_type }}</span>
+              </div>
+              {% endfor %}
+            {% else %}
+            <div class="empty-copy">No recent changes in the current scope.</div>
+            {% endif %}
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

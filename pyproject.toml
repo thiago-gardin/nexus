@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nexus"
+version = "0.1.0"
+description = "Nexus local-first cognitive-operational infrastructure"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi",
+  "jinja2",
+  "mcp",
+  "uvicorn",
+]
+
+[tool.setuptools.packages.find]
+include = ["system*"]
+exclude = ["system.tests*", "system.tests.*"]
+
+[tool.setuptools.package-data]
+"system.runtime.api" = ["templates/*.html", "static/*.js", "static/vendor/*.js"]

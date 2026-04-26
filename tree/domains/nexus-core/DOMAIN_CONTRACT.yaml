@@ -1,0 +1,25 @@
+domain_contract:
+  domain_id: nexus-core
+  name: Nexus Core Domain
+  description: Bootstrap domain used to prove the executable core and treefolder publication
+    flow.
+  cognitive_purpose: Provide a real seeded domain for Phase 1 end-to-end verification.
+  source_types_supported:
+  - note
+  local_entity_types:
+  - concept
+  relation_types:
+  - references
+  payload_types: []
+  promotion_rules:
+  - manual_review
+  governance_dependencies:
+  - baseline
+  status: active
+  version: 1
+  owner_human: null
+  owner_agent: null
+  active_domain_version_id: null
+  active_domain_version_label: null
+  created_at: '2026-04-10T04:08:59.335626Z'
+  updated_at: '2026-04-10T04:08:59.335626Z'

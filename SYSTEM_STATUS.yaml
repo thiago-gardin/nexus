@@ -1,0 +1,169 @@
+system_phase: maintenance_hardening
+build_phase: completion_sprint_done
+last_updated: "2026-04-24"
+agent_lifecycle: maintenance_agent
+product_readiness: local_first_operational_ready
+general_availability_status: not_claimed
+
+repo_location: "C:\\Dev\\nexus\\"
+
+executable_core:
+  status: local_first_operational_ready
+  db_engine: sqlite
+  tables_migrated: 16
+  tables_required: 16
+
+domains_registered: 1
+entities_persisted: 2
+relations_persisted: 1
+events_emitted: 6
+
+runtime_capabilities:
+  governance_rule_api: implemented
+  audit_functions:
+    - override
+    - list_events_by_actor
+    - compare_versions
+  object_layer_services:
+    domain_versions: implemented
+    sources: implemented
+    payloads: implemented
+    projections: implemented
+    governance_rules: implemented
+    jobs: implemented
+  product_authoring_control_plane:
+    status: implemented_minimum_day0_slice
+    domain_templates:
+      - work_portfolio_governance
+      - mail_archive_day0
+    source_registration_atomic_payload_source: implemented
+    object_validation_service: implemented
+    authoring_api: implemented
+  generic_ingestion:
+    status: implemented
+    formats_supported:
+      - md
+      - txt
+      - json
+    external_connectors: out_of_scope_by_assumption
+  typing_pipeline:
+    status: minimum_candidate_generation
+    canonical_promotion: proposal_only
+  reconciliation:
+    status: proposal_first_scored_candidates
+    alias_matching: implemented
+    merge_handling: proposal_then_human_approval
+    separation_handling: proposal_then_human_review
+    full_semantic_canonicalization_engine: not_claimed
+  reentry:
+    status: structured_diff_and_tree_inbox_proposals
+    tree_inbox_import: implemented
+    duplicate_import_guard: "tree-proposal:<relative_path>"
+  projection_persistence:
+    status: implemented
+    meeting_context: implemented
+    project_state: implemented
+
+materialization:
+  treefolder_exists: true
+  treefolder_path: "tree/"
+  projections_published: 11
+  published_object_views:
+    domain_overviews: implemented
+    domain_operational_summaries: implemented
+    pending_review_queues: implemented
+    active_decision_queues: implemented
+    recent_changes: implemented
+    meeting_contexts: implemented
+    project_states: implemented
+    entity_snapshots: implemented
+    relation_snapshots: implemented
+    payload_snapshots: implemented
+    projection_indexes: implemented
+    canonical_entity_indexes: implemented
+    canonical_relation_indexes: implemented
+    proposal_inbox_indexes: implemented
+    governance_traces: implemented
+    domain_charters: implemented
+    source_indexes: implemented
+    ingestion_run_indexes: implemented
+    authoring_summaries: implemented
+  api_materialization_endpoints: implemented
+  full_tree_expansion_for_prd: implemented_under_local_first_assumptions
+
+human_surface:
+  status: modular_local_cockpit
+  action_panel: compatibility_redirect_to_operate
+  operate_workspace: implemented_unified_workbench_v1
+  action_drawer: implemented
+  review_queue: implemented
+  approve_reject: implemented
+  graph_view: implemented_shared_workbench_shell
+  graph_filters: implemented
+  object_inspector: implemented
+  payload_viewer: implemented
+  projection_panel: implemented
+  event_timeline: implemented
+  reentry_diff_panel: implemented
+  dynamic_schema_forms: implemented_inferred_ui_schema
+  label_based_pickers: implemented
+  automatic_id_suggestions: implemented_for_human_surface
+  event_stream_workspace_coupling: implemented
+  frontend_stack: fastapi_jinja_local_js
+
+agent_surface:
+  rest_local_status: operational
+  mcp_server_status: initialized
+  mcp_real_call_tests: passed
+  governance_rule_reads: implemented
+  event_actor_filter: implemented
+  version_compare_read: implemented
+  operate_context_reads: implemented_with_ui_schema
+  tools_registered: 11
+  local_operator_profile:
+    status: implemented_explicit_profile
+    tools_registered: 20
+    default_profile_mutation: disabled
+  normative_tools:
+    - get_domain
+    - get_entity
+    - get_relation
+    - get_payload
+    - search_objects
+    - get_projection
+    - get_operate_context
+    - get_active_domain_charter
+    - create_proposal
+    - get_decision_queue
+    - explain_object
+
+verification:
+  py_compile_changed_runtime_modules: passed
+  prd_completion_integration_tests: passed
+  full_system_tests: passed
+  full_system_test_command: "python -m unittest discover -s system/tests -t . -p \"test_*.py\""
+  full_system_test_count: 45
+  acceptance_scenario: passed
+  acceptance_scope:
+    - multiple_domains
+    - local_json_md_txt_ingestion
+    - entity_relation_candidates
+    - reconciliation_proposal
+    - human_approval
+    - object_versioning
+    - useful_projection
+    - tree_publication
+    - mcp_read
+    - cockpit_read
+    - audit_reconstruction
+
+hardening_backlog:
+  governance_service_separation: pending
+  approved_proposal_service_path_convergence: pending
+  mcp_transport_protocol_depth: pending
+  advanced_audit_replay: deferred
+  core_vs_materialization_compare: deferred
+  external_source_connectors: out_of_scope_until_human_decision
+  cockpit_usability_hardening: unified_workbench_v1_done_followup_required
+
+notes: "Nexus is ready for local-first operational use and maintenance under the approved PRD assumptions. Phase 20 PRD acceptance closure remains the baseline, and the 2026-04-13 post-closure completion sprint closed confirmed spec gaps for GovernanceService.override semantics, GovernanceRule API exposure, actor-filtered event reads, minimum object version comparison, and agent manifest/read-route reflection. On 2026-04-21 a minimum Day 0 operational control plane slice added domain versions, atomic source registration, object validation service, authoring API hardening, cockpit action panel, MCP local_operator profile, Day 0 Work/Mail templates, and materialization of charters/sources/runs/authoring summaries. On 2026-04-23 the cockpit moved to an `Operate Workspace` model with preserved context, inline receipts/errors, charter-aware authoring, explicit materialization control, and matching MCP/REST read contracts for operate context and active charter. On 2026-04-24 the human surface was consolidated into a unified workbench shared by `operate` and `graph`, replacing stacked action cards with an action drawer, label-based pickers, inferred schema-driven human forms, automatic ID suggestion in the cockpit flow, and coupled inspector/event/publication context. External connectors remain explicitly out of scope; PST parsing is not claimed. This status does not claim hosted, connector-complete, or general-availability product readiness."

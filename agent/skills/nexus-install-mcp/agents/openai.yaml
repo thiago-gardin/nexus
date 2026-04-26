@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nexus MCP Installer"
+  short_description: "Install the local Nexus MCP server into Codex."
+  default_prompt: "Use the Nexus MCP installer skill to configure the local Nexus MCP server for Codex and validate the nine normative tools."

@@ -1,0 +1,41 @@
+domain_id: ux_agent_day0_20260423
+active_domain_version:
+  domain_version_id: 5dcd979e-2602-4937-80b7-0b1bc4e1ec6b
+  domain_id: ux_agent_day0_20260423
+  version_label: day0-agent
+  status: active
+  charter: {}
+  allowed_entity_types:
+  - project
+  allowed_relation_types:
+  - depends_on
+  allowed_payload_types: []
+  required_fields:
+    project:
+    - workspace_path
+  promotion_rules:
+  - manual_review
+  created_at: '2026-04-23T17:29:28.372722Z'
+  activated_at: '2026-04-23T17:29:28.377186Z'
+  last_event_id: 79d99095-5487-4fb5-a79f-9296d34b872a
+domain_versions:
+- domain_version_id: 5dcd979e-2602-4937-80b7-0b1bc4e1ec6b
+  domain_id: ux_agent_day0_20260423
+  version_label: day0-agent
+  status: active
+  charter: {}
+  allowed_entity_types:
+  - project
+  allowed_relation_types:
+  - depends_on
+  allowed_payload_types: []
+  required_fields:
+    project:
+    - workspace_path
+  promotion_rules:
+  - manual_review
+  created_at: '2026-04-23T17:29:28.372722Z'
+  activated_at: '2026-04-23T17:29:28.377186Z'
+  last_event_id: 79d99095-5487-4fb5-a79f-9296d34b872a
+publication_note: Published from executable state; edit via cockpit/API/MCP local
+  operator, not by editing this file.
